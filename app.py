@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+import re
 import json
 
 filename = 'Metadata.xml'
@@ -19,8 +20,13 @@ for item in root.iter():
         xmldict['ACS URL'] = item.attrib['Location']
     if 'NameIDFormat' in item.tag:
         nameidlist.append(item.text)
+    if 'SignatureMethod' in item.tag:
+        signaturemethod = re.findall(r'sha.*', item.attrib['Algorithm'])
+        xmldict['Signature Algorithms'] = signaturemethod
 
 xmldict['NameID Format'] = nameidlist
 
 with open('output.txt', 'w') as file:
     file.write(json.dumps(xmldict, indent=4, ensure_ascii=True))
+
+print (signaturemethod)
