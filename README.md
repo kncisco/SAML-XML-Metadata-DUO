@@ -6,6 +6,7 @@ The script parses SAML Metadata (from the SAML SP) and writes a JSON formatted t
 
 The output contains the following:
 - Entity ID
+- Supported Signature Algorithms
 - Assertion Consumer Service (ACS) URL
 - Single Logout URL
 - List of supported NameID Formats from the SAML SP
