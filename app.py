@@ -18,9 +18,9 @@ for item in root.iter():
             xmldict['Single Logout URL'] = item.attrib['Location']
     elif 'AssertionConsumerService' in item.tag:
         xmldict['ACS URL'] = item.attrib['Location']
-    if 'NameIDFormat' in item.tag:
+    elif 'NameIDFormat' in item.tag:
         nameidlist.append(item.text)
-    if 'SignatureMethod' in item.tag:
+    elif 'SignatureMethod' in item.tag:
         signaturemethod = re.findall(r'sha.*', item.attrib['Algorithm'])
         xmldict['Signature Algorithms'] = signaturemethod
 
