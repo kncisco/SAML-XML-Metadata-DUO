@@ -28,5 +28,3 @@ xmldict['NameID Format'] = nameidlist
 
 with open('output.txt', 'w') as file:
     file.write(json.dumps(xmldict, indent=4, ensure_ascii=True))
-
-print (signaturemethod)
