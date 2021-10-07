@@ -2,9 +2,13 @@ import xml.etree.ElementTree as ET
 import re
 import json
 
-filename = 'Metadata.xml'
+try:
+    filename = 'Metadata.xml'
+    tree = ET.parse(filename)
+except:
+    filename = input('Metadata.xml not found, Please input the correct metadata filename: ')
+    tree = ET.parse(filename)
 
-tree = ET.parse(filename)
 root = tree.getroot()
 
 xmldict = {}
