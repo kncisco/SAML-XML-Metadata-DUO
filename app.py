@@ -9,6 +9,7 @@ root = tree.getroot()
 
 xmldict = {}
 nameidlist = []
+signingoptiondict = {}
 
 xmldict['Entity ID'] = root.attrib['entityID']
 
@@ -23,8 +24,18 @@ for item in root.iter():
     elif 'SignatureMethod' in item.tag:
         signaturemethod = re.findall(r'sha.*', item.attrib['Algorithm'])
         xmldict['Signature Algorithms'] = signaturemethod
+    elif 'SPSSODescriptor' in item.tag:
+        if item.attrib['AuthnRequestsSigned'] == 'true':
+            signingoptiondict['Sign Response'] = True
+        else:
+            signingoptiondict['Sign Response'] = False
+        if item.attrib['WantAssertionsSigned'] == 'true':
+            signingoptiondict['Sign Assertion'] = True
+        else:
+            signingoptiondict['Sign Assertion'] = False
 
 xmldict['NameID Format'] = nameidlist
+xmldict['Signing Options'] = signingoptiondict
 
 with open('output.txt', 'w') as file:
     file.write(json.dumps(xmldict, indent=4, ensure_ascii=True))
