@@ -2,52 +2,58 @@
 
 import xml.etree.ElementTree as ET
 import re
+import os
 import json
 
-### Parse Metadata in Metadata or prompt for filename ###
-try:
-    filename = 'Metadata.xml'
-    tree = ET.parse(filename)
-except:
-    filename = input('Metadata.xml not found, Please input the correct metadata filename: ')
-    tree = ET.parse(filename)
+def metadataParser(metadata):
+    ### Setup Relevant Objects ###
+    xmldict = {}
+    nameidlist = []
+    signingoptiondict = {}
+    
+    ### Parse Provided Metadata and Get XML Root ###
+    tree = ET.parse(metadata)
+    root = tree.getroot()
+    
+    ### Extract Relevant Data and store in Dict ###
+    xmldict['Entity ID'] = root.attrib['entityID']
 
-### Setup XML Root and required objects ###
+    for item in root.iter():
+        if 'SingleLogoutService' in item.tag:
+            if 'HTTP-POST' in item.attrib['Binding']:
+                xmldict['Single Logout URL'] = item.attrib['Location']
+        elif 'AssertionConsumerService' in item.tag:
+            xmldict['ACS URL'] = item.attrib['Location']
+        elif 'NameIDFormat' in item.tag:
+            nameidlist.append(item.text)
+        elif 'SignatureMethod' in item.tag:
+            signaturemethod = re.findall(r'sha.*', item.attrib['Algorithm'])
+            xmldict['Signature Algorithms'] = signaturemethod
+        elif 'SPSSODescriptor' in item.tag:
+            if item.attrib['AuthnRequestsSigned'] == 'true':
+                signingoptiondict['Sign Response'] = True
+            else:
+                signingoptiondict['Sign Response'] = False
+            if item.attrib['WantAssertionsSigned'] == 'true':
+                signingoptiondict['Sign Assertion'] = True
+            else:
+                signingoptiondict['Sign Assertion'] = False
 
-root = tree.getroot()
-xmldict = {}
-nameidlist = []
-signingoptiondict = {}
+    xmldict['NameID Format'] = nameidlist
+    xmldict['Signing Options'] = signingoptiondict
+    return xmldict
 
-xmldict['Entity ID'] = root.attrib['entityID']
+filename = 'Metadata.xml'
 
-### Parse XML items and extract relevant data ###
+if __name__ == "__main__":
 
-for item in root.iter():
-    if 'SingleLogoutService' in item.tag:
-        if 'HTTP-POST' in item.attrib['Binding']:
-            xmldict['Single Logout URL'] = item.attrib['Location']
-    elif 'AssertionConsumerService' in item.tag:
-        xmldict['ACS URL'] = item.attrib['Location']
-    elif 'NameIDFormat' in item.tag:
-        nameidlist.append(item.text)
-    elif 'SignatureMethod' in item.tag:
-        signaturemethod = re.findall(r'sha.*', item.attrib['Algorithm'])
-        xmldict['Signature Algorithms'] = signaturemethod
-    elif 'SPSSODescriptor' in item.tag:
-        if item.attrib['AuthnRequestsSigned'] == 'true':
-            signingoptiondict['Sign Response'] = True
-        else:
-            signingoptiondict['Sign Response'] = False
-        if item.attrib['WantAssertionsSigned'] == 'true':
-            signingoptiondict['Sign Assertion'] = True
-        else:
-            signingoptiondict['Sign Assertion'] = False
+    ### Check to see if required file exists, if not - prompt for Filename"
+    if os.path.isfile(filename) is False:
+        filename = input('Metadata.xml not found, Please input the correct metadata filename: ')
 
-xmldict['NameID Format'] = nameidlist
-xmldict['Signing Options'] = signingoptiondict
+    ### Submit file to metadataParser Function - extract relevant objects ###
+    parseddata = metadataParser(filename)
 
-### Write output ###
-
-with open('output.txt', 'w') as file:
-    file.write(json.dumps(xmldict, indent=4, ensure_ascii=True))
+    ### Write output ###
+    with open('output.txt', 'w') as file:
+        file.write(json.dumps(parseddata, indent=4, ensure_ascii=True))
