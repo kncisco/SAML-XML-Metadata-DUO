@@ -1,7 +1,10 @@
+### Import appropriate modules ###
+
 import xml.etree.ElementTree as ET
 import re
 import json
 
+### Parse Metadata in Metadata or prompt for filename ###
 try:
     filename = 'Metadata.xml'
     tree = ET.parse(filename)
@@ -9,13 +12,16 @@ except:
     filename = input('Metadata.xml not found, Please input the correct metadata filename: ')
     tree = ET.parse(filename)
 
-root = tree.getroot()
+### Setup XML Root and required objects ###
 
+root = tree.getroot()
 xmldict = {}
 nameidlist = []
 signingoptiondict = {}
 
 xmldict['Entity ID'] = root.attrib['entityID']
+
+### Parse XML items and extract relevant data ###
 
 for item in root.iter():
     if 'SingleLogoutService' in item.tag:
@@ -40,6 +46,8 @@ for item in root.iter():
 
 xmldict['NameID Format'] = nameidlist
 xmldict['Signing Options'] = signingoptiondict
+
+### Write output ###
 
 with open('output.txt', 'w') as file:
     file.write(json.dumps(xmldict, indent=4, ensure_ascii=True))
