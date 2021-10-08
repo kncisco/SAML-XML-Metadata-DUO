@@ -10,10 +10,12 @@ The output contains the following:
 - Assertion Consumer Service (ACS) URL
 - Single Logout URL
 - List of supported NameID Formats from the SAML SP
+- True/False on whether Assertions and Responses require signing
 
 Requirements:
 - SAML Metadata from the Service Provider of choice (ie - Cisco vManage)
 - Edit the "filename" variable in the script to reflect the name of the SAML Metadata file
+- Alternativvely, the script will prompt for the correct filename if "Metadata.xml" is not found.
 
 Usage:
 - python3 app.py
