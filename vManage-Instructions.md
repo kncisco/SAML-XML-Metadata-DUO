@@ -12,12 +12,12 @@ These instructions assume that DUO SSO has already been setup in your environmen
 5. Under the "Service Provider" section, use the output of the app to fill in the appropriate entries.
 6. Under the "SAML Response" section, use the output of the app to fill in the appropriate entries and include the following additions.
   - In the "Map Attributes" section - select the appropriate DUO (iDP) attribute (example - Username) - map that attribute to the "SAML Response Attribute" Username.
-    - NOTE - vManage expects to see the "Username" attribute - therefore, the SAML Response Attribute MUST be "Username"
+   - NOTE - vManage expects to see the "Username" attribute - therefore, the SAML Response Attribute MUST be "Username"
 
 ![Map Attributes](/images/map.png)
 
-  - In the "Role Attributes" section - Enter "Groups" under "Attribute Name".  You can associate the appropriate groups in Duo to the appropriate vManage groups here.
-    - By Default - vManage includes the "netadmin" and "operator" roles, see the following image for an example of that mapping to the appropriate Duo groups.
+  - In the "Role Attributes" section - Enter "Groups" under "Attribute Name".  You can associate the appropriate groups in Duo to the appropriate vManage groups here
+   - By Default - vManage includes the "netadmin" and "operator" roles, see the following image for an example of that mapping to the appropriate Duo groups.
 
 ![Role Attributes](/images/role.png)
 
