@@ -22,4 +22,4 @@ Usage:
 
 and.... Voila!!!
 
-You can use these outputs to configure the appropriate settings within your DUO Generic Service Provider application.
+You can use these outputs to configure the appropriate settings within your DUO Generic Service Provider application.  See the included instructions for setting up vManage with Duo SSO
