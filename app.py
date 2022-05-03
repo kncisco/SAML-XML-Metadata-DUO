@@ -8,6 +8,7 @@ def metadataParser(metadata):
     xmldict = {}
     nameidlist = []
     signingoptiondict = {}
+    acslist = []
     
     ### Parse Provided Metadata and Get XML Root ###
     tree = ET.parse(metadata)
@@ -18,10 +19,17 @@ def metadataParser(metadata):
 
     for item in root.iter():
         if 'SingleLogoutService' in item.tag:
-            if 'HTTP-POST' in item.attrib['Binding']:
-                xmldict['Single Logout URL'] = item.attrib['Location']
+            if 'HTTP-POST' or "HTTP-Redirect" in item.attrib['Binding']:
+                try:
+                    xmldict['Single Logout URL'] = item.attrib['ResponseLocation']
+                except KeyError:    
+                    xmldict['Single Logout URL'] = item.attrib['Location']
         elif 'AssertionConsumerService' in item.tag:
-            xmldict['ACS URL'] = item.attrib['Location']
+            try:
+                acsdict = { 'URL': item.attrib['Location'], 'Index': item.attrib['index'], 'isDefault': item.attrib['isDefault'] }
+            except KeyError:
+                acsdict = { 'URL': item.attrib['Location'], 'Index': item.attrib['index'] }
+            acslist.append(acsdict)           
         elif 'NameIDFormat' in item.tag:
             nameidlist.append(item.text)
         elif 'SignatureMethod' in item.tag:
@@ -38,6 +46,7 @@ def metadataParser(metadata):
                 signingoptiondict['Sign Assertion'] = False
 
     xmldict['NameID Format'] = nameidlist
+    xmldict['ACS URLs'] = acslist
     xmldict['Signing Options'] = signingoptiondict
     return xmldict
 
